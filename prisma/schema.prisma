@@ -1,0 +1,52 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  output   = "../node_modules/@prisma-app/client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Child {
+  id            Int       @id @default(autoincrement())
+  name          String
+  gender        Gender
+  birthDatetime DateTime
+  feedings      Feeding[]
+  extraData     Json?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Feeding {
+  id        Int           @id @default(autoincrement())
+  startTime DateTime
+  endTime   DateTime?
+  foodType  FoodType
+  source    FeedingSource
+  child     Child         @relation(fields: [childId], references: [id])
+  childId   Int
+  extraData Json?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum FoodType {
+  FORMULA
+  BREAST_MILK
+}
+
+enum FeedingSource {
+  NIPPLE
+  BOTTLE
+}
