@@ -8,4 +8,5 @@ export default [
     "children/:childId/feedings/new",
     "routes/children.$childId.feedings.new.tsx"
   ),
+  route("pumping-sessions/new", "routes/pumping-sessions.new.tsx"),
 ] satisfies RouteConfig;

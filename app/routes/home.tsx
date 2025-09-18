@@ -7,6 +7,13 @@ export default function Home() {
       <Link to="/children/new" className="text-blue-500 hover:underline">
         Add a new Child
       </Link>
+      <br />
+      <Link
+        to="/pumping-sessions/new"
+        className="text-blue-500 hover:underline"
+      >
+        Add a new Pumping Session
+      </Link>
     </div>
   );
 }
