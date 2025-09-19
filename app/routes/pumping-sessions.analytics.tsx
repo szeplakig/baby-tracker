@@ -1,4 +1,4 @@
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, Form, Link } from "react-router-dom";
 import { prisma } from "~/db.server";
 import type { PumpingSession } from "@prisma-app/client";
 import {
@@ -11,6 +11,21 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import type { ActionFunctionArgs } from "react-router-dom";
+import { redirect } from "react-router-dom";
+
+export async function action({ request }: ActionFunctionArgs) {
+  const formData = await request.formData();
+  const intent = formData.get("intent");
+
+  if (intent === "deletePumpingSession") {
+    const sessionId = Number(formData.get("sessionId"));
+    await prisma.pumpingSession.delete({ where: { id: sessionId } });
+    return redirect(`/pumping-sessions/analytics`);
+  }
+
+  return null;
+}
 
 export async function loader() {
   const pumpingSessions: PumpingSession[] = await prisma.pumpingSession.findMany({
@@ -170,6 +185,28 @@ export default function PumpingAnalytics() {
               <p>
                 <strong>Volume:</strong> {session.volumeMl} ml
               </p>
+              <div className="flex items-center gap-x-4">
+                <Link
+                  to={`/pumping-sessions/${session.id}/edit`}
+                  className="text-blue-500 hover:underline"
+                >
+                  Szerkesztés
+                </Link>
+                <Form method="post">
+                  <input
+                    type="hidden"
+                    name="intent"
+                    value="deletePumpingSession"
+                  />
+                  <input type="hidden" name="sessionId" value={session.id} />
+                  <button
+                    type="submit"
+                    className="text-red-500 hover:underline"
+                  >
+                    Törlés
+                  </button>
+                </Form>
+              </div>
             </li>
           ))}
         </ul>
