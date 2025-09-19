@@ -1,6 +1,7 @@
-import { useLoaderData, Link } from "react-router-dom";
+import { useLoaderData, Link, Form } from "react-router-dom";
 import { prisma } from "~/db.server";
 import { FoodType, FeedingSource, type Feeding, type Child } from "@prisma-app/client";
+import { formatDateTime } from "~/utils.ts";
 
 export async function loader() {
   const feedings = await prisma.feeding.findMany({
@@ -79,10 +80,10 @@ export default function FeedingAnalytics() {
 
   return (
     <div className="p-8">
-      <h1 className="text-3xl font-bold">Feeding Analytics</h1>
+      <h1 className="text-3xl font-bold">Etetési statisztikák</h1>
       <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <div className="rounded-lg bg-white p-4 shadow">
-          <p className="text-sm font-medium text-gray-500">Total Feedings</p>
+          <p className="text-sm font-medium text-gray-500">Összes etetés</p>
           <p className="text-2xl font-bold">{stats.totalFeedings}</p>
         </div>
         <div className="rounded-lg bg-white p-4 shadow">
@@ -92,7 +93,7 @@ export default function FeedingAnalytics() {
           </p>
         </div>
         <div className="rounded-lg bg-white p-4 shadow">
-          <p className="text-sm font-medium text-gray-500">By Food Type</p>
+          <p className="text-sm font-medium text-gray-500">Típus szerint</p>
           {Object.entries(stats.byFoodType).map(([type, count]) => (
             <p key={type}>
               {type}: {count}
@@ -100,7 +101,7 @@ export default function FeedingAnalytics() {
           ))}
         </div>
         <div className="rounded-lg bg-white p-4 shadow">
-          <p className="text-sm font-medium text-gray-500">By Feeding Source</p>
+          <p className="text-sm font-medium text-gray-500">Forrás szerint</p>
           {Object.entries(stats.byFeedingSource).map(([source, count]) => (
             <p key={source}>
               {source}: {count}
@@ -109,26 +110,44 @@ export default function FeedingAnalytics() {
         </div>
       </div>
       <div className="mt-8">
-        <h2 className="text-2xl font-bold">All Feedings</h2>
+        <h2 className="text-2xl font-bold">Legutóbbi etetések</h2>
         <ul className="mt-4 space-y-4">
-          {feedings.map((feeding: Feeding) => (
+          {(feedings as Feeding[]).map((feeding) => (
             <li key={feeding.id} className="rounded-lg bg-white p-4 shadow">
               <p>
-                <strong>Start:</strong>{" "}
-                {new Date(feeding.startTime).toLocaleString()}
+                <strong>Időpont:</strong>{" "}
+                {formatDateTime(new Date(feeding.startTime))}
               </p>
               {feeding.endTime && (
                 <p>
-                  <strong>End:</strong>{" "}
-                  {new Date(feeding.endTime).toLocaleString()}
+                  <strong>Vége:</strong>{" "}
+                  {formatDateTime(new Date(feeding.endTime))}
                 </p>
               )}
               <p>
-                <strong>Food Type:</strong> {feeding.foodType}
+                <strong>Típus:</strong> {feeding.foodType}
               </p>
               <p>
-                <strong>Source:</strong> {feeding.source}
+                <strong>Forrás:</strong> {feeding.source}
               </p>
+              <div className="mt-2 flex gap-x-2">
+                <Link
+                  to={`/children/${feeding.childId}/feedings/${feeding.id}/edit`}
+                  className="text-sm text-blue-500 hover:underline"
+                >
+                  Szerkesztés
+                </Link>
+                <Form method="post">
+                  <input type="hidden" name="intent" value="deleteFeeding" />
+                  <input type="hidden" name="feedingId" value={feeding.id} />
+                  <button
+                    type="submit"
+                    className="text-sm text-red-500 hover:underline"
+                  >
+                    Törlés
+                  </button>
+                </Form>
+              </div>
             </li>
           ))}
         </ul>

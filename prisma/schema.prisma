@@ -29,6 +29,7 @@ model Feeding {
   endTime   DateTime?
   foodType  FoodType
   source    FeedingSource
+  amount    Int?
   child     Child         @relation(fields: [childId], references: [id])
   childId   Int
   extraData Json?

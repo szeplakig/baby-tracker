@@ -1,14 +1,13 @@
 import type { ActionFunctionArgs } from "react-router-dom";
 import {
-  ActionFunctionArgs,
   Form,
   redirect,
   useLoaderData,
 } from "react-router-dom";
-import { prisma } from "~/db.server";
+import { prisma } from "~/db.server.ts";
 import { FoodType, FeedingSource } from "@prisma-app/client";
-import DatePicker from "react-datepicker";
 import { useState } from "react";
+import DateTimePicker from "~/components/DateTimePicker.tsx";
 
 export async function loader({ params }: ActionFunctionArgs) {
   const child = await prisma.child.findUnique({
@@ -25,9 +24,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const formData = await request.formData();
   const startTime = new Date(
     formData.get("startTime") as string
-  ).toISOString();
+  );
   const endTime = formData.get("endTime")
-    ? new Date(formData.get("endTime") as string).toISOString()
+    ? new Date(formData.get("endTime") as string)
     : null;
   const foodType = formData.get("foodType") as FoodType;
   const source = formData.get("source") as FeedingSource;
@@ -58,41 +57,18 @@ export default function NewFeeding() {
     <div className="p-8">
       <h1 className="text-3xl font-bold">Új etetés rögzítése - {child.name}</h1>
       <Form method="post" className="mt-4 space-y-4">
-        <div>
-          <label
-            htmlFor="startTime"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Kezdés
-          </label>
-          <DatePicker
-            id="startTime"
-            name="startTime"
-            selected={startTime}
-            onChange={(date) => setStartTime(date)}
-            showTimeSelect
-            dateFormat="Pp"
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-            required
-          />
-        </div>
-        <div>
-          <label
-            htmlFor="endTime"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Befejezés
-          </label>
-          <DatePicker
-            id="endTime"
-            name="endTime"
-            selected={endTime}
-            onChange={(date) => setEndTime(date)}
-            showTimeSelect
-            dateFormat="Pp"
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-          />
-        </div>
+        <DateTimePicker
+          label="Kezdés"
+          selected={startTime}
+          onChange={setStartTime}
+          name="startTime"
+        />
+        <DateTimePicker
+          label="Befejezés"
+          selected={endTime}
+          onChange={setEndTime}
+          name="endTime"
+        />
         <div>
           <label
             htmlFor="foodType"
@@ -106,11 +82,8 @@ export default function NewFeeding() {
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
             required
           >
-            {Object.values(FoodType).map((type) => (
-              <option key={type} value={type}>
-                {type}
-              </option>
-            ))}
+            <option value={FoodType.BREAST_MILK}>Anyatej</option>
+            <option value={FoodType.FORMULA}>Tápszer</option>
           </select>
         </div>
         <div>
@@ -126,11 +99,8 @@ export default function NewFeeding() {
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
             required
           >
-            {Object.values(FeedingSource).map((source) => (
-              <option key={source} value={source}>
-                {source}
-              </option>
-            ))}
+            <option value={FeedingSource.NIPPLE}>Mell</option>
+            <option value={FeedingSource.BOTTLE}>Cumisüveg</option>
           </select>
         </div>
         <div>
@@ -149,7 +119,7 @@ export default function NewFeeding() {
         </div>
         <button
           type="submit"
-          className="rounded bg-blue-500 px-4 py-2 text-white"
+          className="w-full rounded-md bg-blue-500 px-4 py-2 text-white"
         >
           Mentés
         </button>

@@ -2,6 +2,7 @@ import { useLoaderData, Link, Form, redirect } from "react-router-dom";
 import { prisma } from "~/db.server";
 import type { Weight } from "@prisma-app/client";
 import type { ActionFunctionArgs } from "react-router-dom";
+import { formatDateTime } from "~/utils.ts";
 
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
@@ -41,10 +42,10 @@ export default function WeightAnalytics() {
               <li key={weight.id} className="rounded-lg bg-white p-4 shadow">
                 <p>
                   <strong>Dátum:</strong>{" "}
-                  {new Date(weight.date).toLocaleDateString()}
+                  {formatDateTime(new Date(weight.date))}
                 </p>
                 <p>
-                  <strong>Súly:</strong> {weight.weight} kg
+                  <strong>Súly:</strong> {weight.weight} g
                 </p>
                 <div className="flex items-center gap-x-4">
                   <Link

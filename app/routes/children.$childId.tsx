@@ -3,6 +3,7 @@ import { useLoaderData, Form, Link, redirect } from "react-router-dom";
 import { prisma } from "~/db.server";
 import type { Feeding, Weight } from "@prisma-app/client";
 import type { ActionFunctionArgs } from "react-router-dom";
+import { formatDate, formatDateTime } from "~/utils";
 
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -49,7 +50,7 @@ export default function ChildDetails() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold">{child.name}</h1>
         <p className="text-gray-600">
-          Születési dátum: {new Date(child.birthDatetime).toLocaleString()}
+          Születési dátum: {formatDateTime(child.birthDatetime)}
         </p>
       </div>
 
@@ -79,7 +80,7 @@ export default function ChildDetails() {
               >
                 <p>
                   <strong>Időpont:</strong>{" "}
-                  {new Date(feeding.startTime).toLocaleString()}
+                  {formatDateTime(feeding.startTime)}
                 </p>
                 <p>
                   <strong>Típus:</strong> {feeding.foodType}
@@ -116,7 +117,7 @@ export default function ChildDetails() {
             {child.weights.map((weight: Weight) => (
               <div key={weight.id} className="rounded-lg bg-white p-4 shadow">
                 <p>
-                  <strong>Dátum:</strong> {new Date(weight.date).toLocaleDateString()}
+                  <strong>Dátum:</strong> {formatDate(weight.date)}
                 </p>
                 <p>
                   <strong>Súly:</strong> {weight.weight} g
