@@ -17,6 +17,7 @@ model Child {
   gender        Gender
   birthDatetime DateTime
   feedings      Feeding[]
+  weights       Weight[]
   extraData     Json?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
@@ -33,6 +34,16 @@ model Feeding {
   extraData Json?
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
+}
+
+model Weight {
+  id        Int      @id @default(autoincrement())
+  weight    Int // in grams
+  date      DateTime
+  child     Child    @relation(fields: [childId], references: [id])
+  childId   Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum Gender {

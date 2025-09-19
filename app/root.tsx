@@ -6,10 +6,15 @@ import {
   Scripts,
   ScrollRestoration,
 } from "react-router";
+import { registerLocale } from "react-datepicker";
+import { hu } from "date-fns/locale/hu";
 
 import type { Route } from "./+types/root";
 import "./app.css";
 import "react-datepicker/dist/react-datepicker.css";
+import { Header } from "./components/header.tsx";
+
+registerLocale("hu", hu);
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -26,7 +31,7 @@ export const links: Route.LinksFunction = () => [
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="hu">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -34,7 +39,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <main className="container mx-auto max-w-sm p-4">{children}</main>
+        <Header />
+        <main className="container mx-autos p-4">{children}</main>
         <ScrollRestoration />
         <Scripts />
       </body>
@@ -47,15 +53,15 @@ export default function App() {
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
-  let message = "Oops!";
-  let details = "An unexpected error occurred.";
+  let message = "Hoppá!";
+  let details = "Váratlan hiba történt.";
   let stack: string | undefined;
 
   if (isRouteErrorResponse(error)) {
-    message = error.status === 404 ? "404" : "Error";
+    message = error.status === 404 ? "404" : "Hiba";
     details =
       error.status === 404
-        ? "The requested page could not be found."
+        ? "A kért oldal nem található."
         : error.statusText || details;
   } else if (import.meta.env.DEV && error && error instanceof Error) {
     details = error.message;

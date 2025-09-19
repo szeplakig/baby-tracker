@@ -8,5 +8,14 @@ export default [
     "children/:childId/feedings/new",
     "routes/children.$childId.feedings.new.tsx"
   ),
+  route(
+    "children/:childId/weights/new",
+    "routes/children.$childId.weights.new.tsx"
+  ),
   route("pumping-sessions/new", "routes/pumping-sessions.new.tsx"),
+  route(
+    "pumping-sessions/analytics",
+    "routes/pumping-sessions.analytics.tsx"
+  ),
+  route("feedings/analytics", "routes/feedings.analytics.tsx"),
 ] satisfies RouteConfig;

@@ -19,6 +19,7 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,
+    "allowImportingTsExtensions": true,
     "moduleResolution": "node16",
     "module": "Node16"
   }

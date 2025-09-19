@@ -1,9 +1,9 @@
 import type { ActionFunctionArgs } from "react-router-dom";
 import { redirect } from "react-router-dom";
 import { Form } from "react-router-dom";
-import { prisma } from "~/db.server";
+import { prisma } from "../db.server";
 import { Gender } from "@prisma-app/client";
-import DatePicker from "react-datepicker";
+import { default as DatePicker } from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -44,7 +44,7 @@ export default function NewChild() {
             htmlFor="name"
             className="block text-sm font-medium text-gray-700"
           >
-            Name
+            Név
           </label>
           <div className="mt-1">
             <input
@@ -60,7 +60,7 @@ export default function NewChild() {
             htmlFor="gender"
             className="block text-sm font-medium text-gray-700"
           >
-            Gender
+            Nem
           </label>
           <div className="mt-1">
             <select
@@ -68,9 +68,9 @@ export default function NewChild() {
               id="gender"
               className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
             >
-              <option value="MALE">Male</option>
-              <option value="FEMALE">Female</option>
-              <option value="OTHER">Other</option>
+              <option value="MALE">Fiú</option>
+              <option value="FEMALE">Lány</option>
+              <option value="OTHER">Egyéb</option>
             </select>
           </div>
         </div>
@@ -79,7 +79,7 @@ export default function NewChild() {
             htmlFor="birthDatetime"
             className="block text-sm font-medium text-gray-700"
           >
-            Birth Datetime
+            Születési idő
           </label>
           <div className="mt-1">
             <DatePicker
@@ -88,6 +88,7 @@ export default function NewChild() {
               showTimeSelect
               timeIntervals={1}
               dateFormat="Pp"
+              locale="hu"
               className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
             />
           </div>
@@ -97,7 +98,7 @@ export default function NewChild() {
             type="submit"
             className="flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
           >
-            Add Child
+            Gyermek hozzáadása
           </button>
         </div>
       </div>
