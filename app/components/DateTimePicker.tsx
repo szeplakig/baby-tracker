@@ -31,6 +31,26 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
           dateFormat="yyyy. MM. dd. HH:mm"
           className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
           isClearable
+          fixedHeight
+          shouldCloseOnSelect={false}
+          popperProps={{
+            strategy: "fixed",
+          }}
+          popperModifiers={[
+            {
+              name: "preventOverflow",
+              options: {
+                boundary: "viewport",
+                padding: 8,
+              },
+            },
+            {
+              name: "flip",
+              options: {
+                fallbackPlacements: ["top", "bottom", "left", "right"],
+              },
+            },
+          ]}
         />
         <NowButton onClick={() => onChange(new Date())} />
         <input type="hidden" name={name} value={selected?.toISOString() ?? ""} />

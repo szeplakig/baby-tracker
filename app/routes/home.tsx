@@ -62,6 +62,12 @@ export default function Home() {
           >
             Etetési statisztikák
           </Link>
+          <Link
+            to="/weights/analytics"
+            className="text-blue-500 hover:underline"
+          >
+            Súlymérési statisztikák
+          </Link>
         </div>
       </div>
     </div>

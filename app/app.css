@@ -9,3 +9,101 @@ html,
 body {
   @apply bg-white;
 }
+
+/* Fix for mobile datepicker overflow */
+.react-datepicker-popper {
+  transform: none !important;
+  will-change: auto !important;
+}
+
+.react-datepicker-popper[data-placement^="bottom"] {
+  margin-top: 10px;
+}
+
+.react-datepicker-popper[data-placement^="top"] {
+  margin-bottom: 10px;
+}
+
+/* Ensure datepicker stays within viewport on mobile */
+@media (max-width: 768px) {
+  .react-datepicker-popper {
+    position: fixed !important;
+    transform: none !important;
+    left: 50% !important;
+    top: 50% !important;
+    margin: 0 !important;
+    z-index: 9999 !important;
+  }
+  
+  .react-datepicker {
+    transform: translate(-50%, -50%) !important;
+    position: relative !important;
+    border-radius: 8px !important;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+    max-width: 90vw !important;
+    max-height: 90vh !important;
+    overflow: auto !important;
+  }
+  
+  /* Add backdrop for mobile */
+  .react-datepicker-popper::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+    backdrop-filter: blur(2px);
+  }
+}
+
+/* Fix for mobile datepicker overflow */
+.react-datepicker-popper {
+  transform: none !important;
+  will-change: auto !important;
+}
+
+.react-datepicker-popper[data-placement^="bottom"] {
+  margin-top: 10px;
+}
+
+.react-datepicker-popper[data-placement^="top"] {
+  margin-bottom: 10px;
+}
+
+/* Ensure datepicker stays within viewport on mobile */
+@media (max-width: 768px) {
+  .react-datepicker-popper {
+    position: fixed !important;
+    transform: none !important;
+    left: 50% !important;
+    top: 50% !important;
+    margin: 0 !important;
+    z-index: 9999 !important;
+  }
+  
+  .react-datepicker {
+    transform: translate(-50%, -50%) !important;
+    position: relative !important;
+    border-radius: 8px !important;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+    max-width: 90vw !important;
+    max-height: 90vh !important;
+    overflow: auto !important;
+  }
+  
+  /* Add backdrop for mobile */
+  .react-datepicker-popper::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+    backdrop-filter: blur(2px);
+  }
+}
