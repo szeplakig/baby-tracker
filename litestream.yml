@@ -1,0 +1,11 @@
+# Litestream configuration for SQLite replication
+dbs:
+  - path: /data/db
+    replicas:
+      - type: s3
+        bucket: ${BUCKET_NAME}
+        path: db
+        region: ${AWS_REGION}
+        access-key-id: ${AWS_ACCESS_KEY_ID}
+        secret-access-key: ${AWS_SECRET_ACCESS_KEY}
+        endpoint: ${AWS_ENDPOINT_URL_S3}

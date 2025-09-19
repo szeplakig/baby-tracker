@@ -8,25 +8,28 @@ primary_region = 'fra'
 
 [build]
 
-[processes]
-  app = 'node ./dbsetup.js npm run start'
+[env]
+DATABASE_URL = "file:/data/db"
 
-[[mounts]]
-  source = 'data'
-  destination = '/data'
-  auto_extend_size_threshold = 80
-  auto_extend_size_increment = '1GB'
-  auto_extend_size_limit = '10GB'
+[processes]
+app = "node dbsetup.js npm run start -- --host 0.0.0.0 --port 3000"
+
+[mounts]
+source = "data"
+destination = "/data"
+auto_extend_size_threshold = 50
+auto_extend_size_increment = "1GB"
+auto_extend_size_limit = "10GB"
 
 [http_service]
-  internal_port = 3000
-  force_https = true
-  auto_stop_machines = 'stop'
-  auto_start_machines = true
-  min_machines_running = 0
-  processes = ['app']
+internal_port = 3000
+force_https = true
+auto_stop_machines = 'stop'
+auto_start_machines = true
+min_machines_running = 0
+processes = ['app']
 
 [[vm]]
-  memory = '1gb'
-  cpu_kind = 'shared'
-  cpus = 1
+memory = '256m'
+cpu_kind = 'shared'
+cpus = 1
