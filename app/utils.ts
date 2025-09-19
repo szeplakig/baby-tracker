@@ -16,3 +16,9 @@ export function formatDate(date: string | Date) {
     day: "2-digit",
   }).format(new Date(date));
 }
+
+export const formatNumber = (number: number) => {
+  return new Intl.NumberFormat("hu-HU", {
+    maximumFractionDigits: 0,
+  }).format(number);
+};

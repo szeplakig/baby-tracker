@@ -6,15 +6,18 @@
     "build": "react-router build",
     "dev": "react-router dev",
     "start": "react-router-serve ./build/server/index.js",
-    "typecheck": "react-router typegen && tsc"
+    "typecheck": "react-router typegen && tsc",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@flydotio/litestream": "^1.0.1",
     "@prisma/client": "^6.16.1",
     "@react-router/node": "^7.7.1",
     "@react-router/serve": "^7.7.1",
     "@types/react-datepicker": "^6.2.0",
     "date-fns": "^4.1.0",
     "isbot": "^5.1.27",
+    "prisma": "^6.16.1",
     "react": "^18.2.0",
     "react-datepicker": "^8.7.0",
     "react-dom": "^18.2.0",
@@ -23,15 +26,18 @@
     "recharts": "^3.2.1"
   },
   "devDependencies": {
+    "@flydotio/dockerfile": "^0.7.10",
     "@react-router/dev": "^7.9.1",
     "@tailwindcss/vite": "^4.1.13",
     "@types/node": "^20",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
-    "prisma": "^6.16.1",
     "tailwindcss": "^4.1.13",
     "typescript": "^5.8.3",
     "vite": "^6.3.3",
     "vite-tsconfig-paths": "^5.1.4"
+  },
+  "dockerfile": {
+    "litestream": true
   }
 }

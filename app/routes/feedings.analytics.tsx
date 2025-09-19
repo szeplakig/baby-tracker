@@ -1,7 +1,22 @@
 import { useLoaderData, Link, Form } from "react-router-dom";
 import { prisma } from "~/db.server";
-import { FoodType, FeedingSource, type Feeding, type Child } from "@prisma-app/client";
-import { formatDateTime } from "~/utils.ts";
+import {
+  FoodType,
+  FeedingSource,
+  type Feeding,
+  type Child,
+} from "@prisma-app/client";
+import { formatDateTime, formatNumber } from "~/utils.ts";
+
+const SOURCE_TO_HU: Record<FeedingSource, string> = {
+  BOTTLE: "Cumisüveg",
+  NIPPLE: "Szoptatás",
+};
+
+const FOOD_TYPE_TO_HU: Record<FoodType, string> = {
+  BREAST_MILK: "Anyatej",
+  FORMULA: "Tápszer",
+};
 
 export async function loader() {
   const feedings = await prisma.feeding.findMany({
@@ -10,11 +25,6 @@ export async function loader() {
     },
   });
   const children = await prisma.child.findMany();
-  const latestWeight = await prisma.weight.findFirst({
-    orderBy: {
-      date: "desc",
-    },
-  });
 
   const totalFeedings = feedings.length;
   const byFoodType = feedings.reduce(
@@ -33,7 +43,6 @@ export async function loader() {
     {} as Record<FeedingSource, number>
   );
 
-  const dailyTarget = latestWeight ? latestWeight.weight * 150 : null;
 
   return {
     feedings,
@@ -42,17 +51,12 @@ export async function loader() {
       totalFeedings,
       byFoodType,
       byFeedingSource,
-      dailyTarget,
     },
   };
 }
 
 export default function FeedingAnalytics() {
-  const {
-    feedings,
-    stats,
-    children,
-  } = useLoaderData<typeof loader>();
+  const { feedings, stats, children } = useLoaderData<typeof loader>();
 
   if (feedings.length === 0) {
     return (
@@ -84,19 +88,13 @@ export default function FeedingAnalytics() {
       <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <div className="rounded-lg bg-white p-4 shadow">
           <p className="text-sm font-medium text-gray-500">Összes etetés</p>
-          <p className="text-2xl font-bold">{stats.totalFeedings}</p>
-        </div>
-        <div className="rounded-lg bg-white p-4 shadow">
-          <p className="text-sm font-medium text-gray-500">Napi cél</p>
-          <p className="text-2xl font-bold">
-            {stats.dailyTarget ? `${stats.dailyTarget} ml` : "N/A"}
-          </p>
+          <p className="text-2xl font-bold">{formatNumber(stats.totalFeedings)}</p>
         </div>
         <div className="rounded-lg bg-white p-4 shadow">
           <p className="text-sm font-medium text-gray-500">Típus szerint</p>
           {Object.entries(stats.byFoodType).map(([type, count]) => (
             <p key={type}>
-              {type}: {count}
+              {FOOD_TYPE_TO_HU[type as FoodType]}: {formatNumber(count as number)}
             </p>
           ))}
         </div>
@@ -104,7 +102,8 @@ export default function FeedingAnalytics() {
           <p className="text-sm font-medium text-gray-500">Forrás szerint</p>
           {Object.entries(stats.byFeedingSource).map(([source, count]) => (
             <p key={source}>
-              {source}: {count}
+              {SOURCE_TO_HU[source as FeedingSource]}:{" "}
+              {formatNumber(count as number)}
             </p>
           ))}
         </div>
@@ -125,11 +124,16 @@ export default function FeedingAnalytics() {
                 </p>
               )}
               <p>
-                <strong>Típus:</strong> {feeding.foodType}
+                <strong>Típus:</strong> {FOOD_TYPE_TO_HU[feeding.foodType]}
               </p>
               <p>
-                <strong>Forrás:</strong> {feeding.source}
+                <strong>Forrás:</strong> {SOURCE_TO_HU[feeding.source]}
               </p>
+              {feeding.amount && (
+                <p>
+                  <strong>Mennyiség:</strong> {formatNumber(feeding.amount)} ml
+                </p>
+              )}
               <div className="mt-2 flex gap-x-2">
                 <Link
                   to={`/children/${feeding.childId}/feedings/${feeding.id}/edit`}

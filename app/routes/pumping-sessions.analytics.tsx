@@ -13,7 +13,7 @@ import {
 } from "recharts";
 import type { ActionFunctionArgs } from "react-router-dom";
 import { redirect } from "react-router-dom";
-import { formatDateTime } from "~/utils.ts";
+import { formatDate, formatDateTime, formatNumber } from "~/utils.ts";
 
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
@@ -46,11 +46,12 @@ export async function loader() {
     name: formatDateTime(new Date(session.startTime)),
     volume: session.volumeMl,
     duration: session.duration,
+    mlPerMinute: session.duration > 0 ? session.volumeMl / session.duration : 0,
   }));
 
   const dailyData = pumpingSessions.reduce(
     (acc, session) => {
-      const date = formatDateTime(new Date(session.startTime));
+      const date = formatDate(new Date(session.startTime));
       if (!acc[date]) {
         acc[date] = { date, totalVolume: 0, count: 0, totalDuration: 0 };
       }
@@ -76,6 +77,7 @@ export async function loader() {
     "Average Volume": d.totalVolume / d.count,
     "Total Duration": d.totalDuration,
     "Average Duration": d.totalDuration / d.count,
+    "ml per minute": d.totalDuration > 0 ? d.totalVolume / d.totalDuration : 0,
     Sessions: d.count,
   }));
 
@@ -102,21 +104,23 @@ export default function PumpingAnalytics() {
       <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-lg bg-white p-4 shadow">
           <p className="text-sm font-medium text-gray-500">Összes fejés</p>
-          <p className="text-2xl font-bold">{stats.totalSessions}</p>
+          <p className="text-2xl font-bold">{formatNumber(stats.totalSessions)}</p>
         </div>
         <div className="rounded-lg bg-white p-4 shadow">
           <p className="text-sm font-medium text-gray-500">
             Összesen lefejt tej
           </p>
-          <p className="text-2xl font-bold">{stats.totalVolume} ml</p>
+          <p className="text-2xl font-bold">{formatNumber(stats.totalVolume)} ml</p>
         </div>
         <div className="rounded-lg bg-white p-4 shadow">
           <p className="text-sm font-medium text-gray-500">Átlagos mennyiség</p>
-          <p className="text-2xl font-bold">{stats.averageVolume} ml</p>
+          <p className="text-2xl font-bold">{formatNumber(stats.averageVolume)} ml</p>
         </div>
         <div className="rounded-lg bg-white p-4 shadow">
           <p className="text-sm font-medium text-gray-500">Átlagos időtartam</p>
-          <p className="text-2xl font-bold">{stats.averageDuration} perc</p>
+          <p className="text-2xl font-bold">
+            {formatNumber(stats.averageDuration)} perc
+          </p>
         </div>
       </div>
 
@@ -128,7 +132,7 @@ export default function PumpingAnalytics() {
             <XAxis dataKey="date" />
             <YAxis yAxisId="left" />
             <YAxis yAxisId="right" orientation="right" />
-            <Tooltip />
+            <Tooltip formatter={(value: number) => formatNumber(value)} />
             <Legend />
             <Line
               yAxisId="left"
@@ -145,11 +149,53 @@ export default function PumpingAnalytics() {
               name="Átlagos mennyiség (ml)"
             />
             <Line
+              yAxisId="left"
+              type="monotone"
+              dataKey="ml per minute"
+              stroke="#ff7300"
+              name="ml/perc"
+            />
+            <Line
               yAxisId="right"
               type="monotone"
               dataKey="Sessions"
               stroke="#ffc658"
               name="Fejések száma"
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+
+      <div className="mt-8">
+        <h2 className="text-2xl font-bold">Fejések statisztikái</h2>
+        <ResponsiveContainer width="100%" height={400}>
+          <LineChart data={sessionChartData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis yAxisId="left" dataKey="volume" />
+            <YAxis yAxisId="right" orientation="right" dataKey="duration" />
+            <Tooltip formatter={(value: number) => formatNumber(value)} />
+            <Legend />
+            <Line
+              yAxisId="left"
+              type="monotone"
+              dataKey="volume"
+              stroke="#8884d8"
+              name="Mennyiség (ml)"
+            />
+            <Line
+              yAxisId="right"
+              type="monotone"
+              dataKey="duration"
+              stroke="#82ca9d"
+              name="Időtartam (perc)"
+            />
+            <Line
+              yAxisId="left"
+              type="monotone"
+              dataKey="mlPerMinute"
+              stroke="#ffc658"
+              name="ml/perc"
             />
           </LineChart>
         </ResponsiveContainer>
@@ -165,10 +211,10 @@ export default function PumpingAnalytics() {
                 {formatDateTime(new Date(session.startTime))}
               </p>
               <p>
-                <strong>Időtartam:</strong> {session.duration} perc
+                <strong>Időtartam:</strong> {formatNumber(session.duration)} perc
               </p>
               <p>
-                <strong>Mennyiség:</strong> {session.volumeMl} ml
+                <strong>Mennyiség:</strong> {formatNumber(session.volumeMl)} ml
               </p>
               <div className="mt-2 flex gap-x-2">
                 <Link
