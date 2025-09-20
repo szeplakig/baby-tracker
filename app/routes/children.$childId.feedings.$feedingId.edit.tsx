@@ -7,7 +7,7 @@ import {
 } from "react-router-dom";
 import { prisma } from "~/db.server";
 import { FoodType, FeedingSource } from "@prisma-app/client";
-import DatePicker from "react-datepicker";
+import TimeSelector from "~/components/TimeSelector.tsx";
 import { useState } from "react";
 
 export async function loader({ params }: LoaderFunctionArgs) {
@@ -67,41 +67,18 @@ export default function EditFeeding() {
         Etetés szerkesztése - {feeding.child.name}
       </h1>
       <Form method="post" className="mt-4 space-y-4">
-        <div>
-          <label
-            htmlFor="startTime"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Kezdés
-          </label>
-          <DatePicker
-            id="startTime"
-            name="startTime"
-            selected={startTime}
-            onChange={(date) => setStartTime(date)}
-            showTimeSelect
-            dateFormat="Pp"
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-            required
-          />
-        </div>
-        <div>
-          <label
-            htmlFor="endTime"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Befejezés
-          </label>
-          <DatePicker
-            id="endTime"
-            name="endTime"
-            selected={endTime}
-            onChange={(date) => setEndTime(date)}
-            showTimeSelect
-            dateFormat="Pp"
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-          />
-        </div>
+        <TimeSelector
+          label="Kezdés"
+          selectedTime={startTime}
+          onChange={setStartTime}
+          name="startTime"
+        />
+        <TimeSelector
+          label="Befejezés"
+          selectedTime={endTime}
+          onChange={setEndTime}
+          name="endTime"
+        />
         <div>
           <label
             htmlFor="foodType"
@@ -118,7 +95,7 @@ export default function EditFeeding() {
           >
             {Object.values(FoodType).map((type) => (
               <option key={type} value={type}>
-                {type}
+                {type === FoodType.BREAST_MILK ? "Anyatej" : "Tápszer"}
               </option>
             ))}
           </select>
@@ -139,7 +116,7 @@ export default function EditFeeding() {
           >
             {Object.values(FeedingSource).map((source) => (
               <option key={source} value={source}>
-                {source}
+                {source === FeedingSource.NIPPLE ? "Mell" : "Cumisüveg"}
               </option>
             ))}
           </select>

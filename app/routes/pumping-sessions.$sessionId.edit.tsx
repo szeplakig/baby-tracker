@@ -2,7 +2,7 @@ import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router-dom";
 import { redirect, useLoaderData, Form } from "react-router-dom";
 import { prisma } from "../db.server";
 import React, { useState, useEffect } from "react";
-import DateTimePicker from "../components/DateTimePicker.tsx";
+import TimeSelector from "../components/TimeSelector.tsx";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const pumpingSession = await prisma.pumpingSession.findUnique({
@@ -37,10 +37,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 export default function EditPumpingSession() {
   const { pumpingSession } = useLoaderData<typeof loader>();
-  const [startTime, setStartTime] = useState(
+  const [startTime, setStartTime] = useState<Date | null>(
     new Date(pumpingSession.startTime)
   );
-  const [endTime, setEndTime] = useState(
+  const [endTime, setEndTime] = useState<Date | null>(
     new Date(pumpingSession.endTime)
   );
   const [duration, setDuration] = useState(pumpingSession.duration);
@@ -55,15 +55,15 @@ export default function EditPumpingSession() {
   return (
     <Form method="post" className="p-4">
       <div className="space-y-4">
-        <DateTimePicker
+        <TimeSelector
           label="Kezdés"
-          selected={startTime}
+          selectedTime={startTime}
           onChange={setStartTime}
           name="startTime"
         />
-        <DateTimePicker
+        <TimeSelector
           label="Befejezés"
-          selected={endTime}
+          selectedTime={endTime}
           onChange={setEndTime}
           name="endTime"
         />

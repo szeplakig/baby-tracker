@@ -3,7 +3,7 @@ import { redirect } from "react-router-dom";
 import { Form } from "react-router-dom";
 import { prisma } from "../db.server";
 import React, { useState, useEffect } from "react";
-import DateTimePicker from "../components/DateTimePicker.tsx";
+import TimeSelector from "../components/TimeSelector.tsx";
 
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
@@ -25,8 +25,8 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function NewPumpingSession() {
-  const [startTime, setStartTime] = useState(new Date());
-  const [endTime, setEndTime] = useState(new Date());
+  const [startTime, setStartTime] = useState<Date | null>(new Date());
+  const [endTime, setEndTime] = useState<Date | null>(new Date());
   const [duration, setDuration] = useState(0);
 
   useEffect(() => {
@@ -39,15 +39,15 @@ export default function NewPumpingSession() {
   return (
     <Form method="post" className="p-4">
       <div className="space-y-4">
-        <DateTimePicker
+        <TimeSelector
           label="Kezdés"
-          selected={startTime}
+          selectedTime={startTime}
           onChange={setStartTime}
           name="startTime"
         />
-        <DateTimePicker
+        <TimeSelector
           label="Befejezés"
-          selected={endTime}
+          selectedTime={endTime}
           onChange={setEndTime}
           name="endTime"
         />
