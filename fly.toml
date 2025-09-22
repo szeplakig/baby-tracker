@@ -32,6 +32,6 @@ processes = ['app']
 
 
 [[vm]]
-memory = '256m'
+memory = '1g'
 cpu_kind = 'shared'
 cpus = 1
